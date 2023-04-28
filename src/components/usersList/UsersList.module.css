@@ -1,0 +1,35 @@
+.users-list-ctn {
+	max-width: 800px;
+	margin: 0 auto 40px;
+	text-align: center;
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+}
+
+.users-list-ctn ul {
+	list-style-type: none;
+	padding: 0;
+	column-count: 4;
+}
+
+.users-list-ctn a {
+	display: flex;
+	align-items: center;
+	text-align: left;
+	margin-bottom: 8px;
+	max-width: 200px;
+	word-break: break-all;
+}
+
+.users-list-ctn a:visited {
+	color: rgb(160, 160, 160);
+}
+
+.users-list-ctn img {
+	display: block;
+	width: 30px;
+	height: auto;
+	border-radius: 50%;
+	margin-right: 10px !important;
+}

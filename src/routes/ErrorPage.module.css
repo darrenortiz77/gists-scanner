@@ -1,0 +1,22 @@
+.error-404 {
+	background-image: url(../assets/lionel_richie.webp);
+	background-size: cover;
+	background-repeat: no-repeat;
+	width: 100%;
+	min-height: 100vh;
+	overflow: auto;
+	color: white;
+	display: flex;
+	flex-direction: column;
+	justify-content: center;
+	align-items: center;
+}
+
+.error-404 h1 {
+	font-size: 4rem;
+	margin: 0;
+}
+
+.error-404 a {
+	color: white;
+}

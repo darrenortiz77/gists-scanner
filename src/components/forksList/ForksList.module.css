@@ -1,0 +1,15 @@
+.forks-list {
+	list-style-type: none;
+	padding: 0;
+	margin: 0;
+	padding: 0;
+	column-count: 3;
+}
+
+.forks-list li {
+	break-inside: avoid;
+}
+
+.date {
+	margin-bottom: 5px;
+}

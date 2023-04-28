@@ -1,0 +1,28 @@
+.avatar {
+	display: block;
+	height: auto;
+	border-radius: 50%;
+}
+
+.avatar.small {
+	width: 30px;
+}
+
+.avatar.large {
+	width: 140px;
+	border: 1px solid #e3e2e2;
+	box-shadow: 2px 2px 2px 0px rgb(0 0 0 / 19%);
+}
+
+.avatar.left {
+}
+
+.avatar.center {
+	margin-left: auto;
+	margin-right: auto;
+}
+
+.avatar.right {
+	margin-left: auto;
+	margin-right: 0;
+}

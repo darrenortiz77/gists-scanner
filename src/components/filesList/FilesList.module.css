@@ -1,0 +1,23 @@
+.files-list {
+	list-style-type: none;
+	margin: 0;
+	padding: 0;
+	column-count: 2;
+}
+
+.files-list li {
+	margin-bottom: 20px;
+	break-inside: avoid;
+}
+
+.filebadge {
+	margin-bottom: 3px;
+}
+
+.filename {
+	word-break: break-all;
+}
+
+.filesize {
+	font-size: 0.75rem;
+}
