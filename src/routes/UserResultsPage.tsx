@@ -11,9 +11,9 @@ export default function UserResultsPage() {
 	// scrolling back to the top automatically. I was under the impression
 	// NavLink did that by default. Temporary hack to ensure we always scroll
 	// back to the top on each page load.
-	useEffect(() => {
-		window.scrollTo(0, 0);
-	});
+	// useEffect(() => {
+	// 	window.scrollTo(0, 0);
+	// });
 
 	return (
 		<>

@@ -16,7 +16,7 @@ export default function Breadcrumbs() {
 	}
 
 	return (
-		<ul className={classes.breadcrumbs}>
+		<ul data-testid="breadcrumbs" className={classes.breadcrumbs}>
 			{matches.map((match, i) => {
 				const text =
 					(match.handle as Record<string, string>)?.crumb || match.params.username || match.params.gistId || '';

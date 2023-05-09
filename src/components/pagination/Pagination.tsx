@@ -73,8 +73,9 @@ export default function Pagination({ urlPattern, numPages, currentPage, maxPagin
 
 	const prevPage = currentPage > 1 ? currentPage - 1 : 1;
 	const nextPage = currentPage < numPages ? currentPage + 1 : numPages;
-	let startingPage = currentPage <= Math.ceil(maxPagination / 2) ? 1 : currentPage - Math.ceil(maxPagination / 2);
-	startingPage = Math.min(startingPage, Math.max(numPages - maxPagination + 1, 1));
+	let startingPage = currentPage - Math.ceil(maxPagination / 2) + 1;
+	startingPage = Math.max(startingPage, 1);
+	startingPage = Math.min(startingPage, numPages - maxPagination + 1);
 	const endingPage = Math.min(startingPage + maxPagination - 1, numPages);
 
 	const paginations = [];

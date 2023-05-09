@@ -1,6 +1,6 @@
 import { Octokit } from '@octokit/core';
 import { OctokitResponse } from '@octokit/types';
-import { LoaderFunctionArgs, defer, json, redirect } from 'react-router-dom';
+import { LoaderFunctionArgs, defer, redirect } from 'react-router-dom';
 
 type RequestOptions = {
 	username?: string;
@@ -47,7 +47,7 @@ const fetchFromGitHub = async (requestStr: string, options?: RequestOptions, inv
 	// Save the response to the local cache
 	cache.set(cacheKey, response);
 
-	console.log(response);
+	// console.log(response);
 
 	return response;
 };
@@ -84,21 +84,22 @@ export const searchUser = async ({ request }: LoaderFunctionArgs) => {
 	const username = data.get('username')?.toString() || '';
 
 	if (username.trim() === '') {
-		return json({ error: 'Please enter a username.' });
+		return { error: 'Please enter a username.' };
 	}
 
 	try {
 		const response = await fetchFromGitHub(`GET /users/${username}/gists`, { username, per_page: 30, page: 1 });
 
 		if (response?.data?.length === 0) {
-			return json({ error: 'User exists but has no gists. Please try a different user.' });
+			return { error: 'User exists but has no gists. Please try a different user.' };
 		} else if (response?.status === 422) {
-			return json({ error: 'Rate limit reached. Please try again in a little while.' });
-		} else {
+			return { error: 'Rate limit reached. Please try again in a little while.' };
+		} else if (response?.data?.length > 0) {
 			return redirect(`/user/${username}`);
 		}
 	} catch (err) {
-		return json({ error: 'User does not exist. Please try again.' });
+		console.error(err);
+		return { error: 'User does not exist. Please try again.' };
 	}
 };
 

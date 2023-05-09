@@ -20,7 +20,7 @@ type ForksListProps = {
 export default function ForksList({ forks }: ForksListProps) {
 	return (
 		<>
-			{forks.length > 0 && (
+			{forks?.length > 0 && (
 				<ul className={classes['forks-list']}>
 					{forks.map(fork => (
 						<li key={fork.id}>
@@ -32,7 +32,7 @@ export default function ForksList({ forks }: ForksListProps) {
 					))}
 				</ul>
 			)}
-			{forks.length === 0 && <p>No forks exist.</p>}
+			{(!forks || forks.length === 0) && <p>No forks exist.</p>}
 		</>
 	);
 }
