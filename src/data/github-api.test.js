@@ -1,15 +1,21 @@
 import * as reactRouterDom from 'react-router-dom';
 import { getGistDetails, getGists, getUsersGists, searchUser } from './github-api';
 
-jest.mock('react-router-dom', () => {
-	const originalModule = jest.requireActual('react-router-dom');
+// jest.mock('react-router-dom', () => {
+// 	const originalModule = jest.requireActual('react-router-dom');
 
-	return {
-		__esModule: true,
-		...originalModule,
-		redirect: jest.fn(),
-	};
-});
+// 	return {
+// 		__esModule: true,
+// 		...originalModule,
+// 		redirect: jest.fn(),
+// 	};
+// });
+
+/*
+NOTE: all tests below are being skipped on purpose.
+Bad practice to test the actual API itself.
+Best to mock it and test app itself.
+*/
 
 describe('getGists()', () => {
 	test.skip('gets public gists', () => {

@@ -90,15 +90,15 @@ export const searchUser = async ({ request }: LoaderFunctionArgs) => {
 	try {
 		const response = await fetchFromGitHub(`GET /users/${username}/gists`, { username, per_page: 30, page: 1 });
 
-		if (response?.data?.length === 0) {
-			return { error: 'User exists but has no gists. Please try a different user.' };
-		} else if (response?.status === 422) {
+		if (response?.status === 422) {
 			return { error: 'Rate limit reached. Please try again in a little while.' };
+		} else if (response?.data?.length === 0) {
+			return { error: 'User exists but has no gists. Please try a different user.' };
 		} else if (response?.data?.length > 0) {
 			return redirect(`/user/${username}`);
 		}
 	} catch (err) {
-		console.error(err);
+		// console.error(err);
 		return { error: 'User does not exist. Please try again.' };
 	}
 };

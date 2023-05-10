@@ -7,24 +7,24 @@ import { render } from '@testing-library/react';
 import { RouterProvider, createMemoryRouter } from 'react-router-dom';
 
 beforeAll(() => {
-	// jest.spyOn(console, 'log').mockImplementation(() => {});
-	// jest.spyOn(console, 'error').mockImplementation(() => {});
-	// jest.spyOn(console, 'warn').mockImplementation(() => {});
-	// jest.spyOn(console, 'info').mockImplementation(() => {});
-	// jest.spyOn(console, 'debug').mockImplementation(() => {});
+	jest.spyOn(console, 'log').mockImplementation(() => {});
+	jest.spyOn(console, 'error').mockImplementation(() => {});
+	jest.spyOn(console, 'warn').mockImplementation(() => {});
+	jest.spyOn(console, 'info').mockImplementation(() => {});
+	jest.spyOn(console, 'debug').mockImplementation(() => {});
 });
 
-export const renderRouterControlledElement = (childNode, { action, loader } = {}) => {
+export const renderRouterControlledElement = (element, { action, loader, path = '/' } = {}) => {
 	const routes = [
 		{
-			path: '/',
-			element: childNode,
-			action: action,
-			loader: loader,
+			path,
+			element,
+			action,
+			loader,
 		},
 	];
 
-	const router = createMemoryRouter(routes);
+	const router = createMemoryRouter(routes, { initialEntries: [path] });
 
 	render(<RouterProvider router={router} />);
 };

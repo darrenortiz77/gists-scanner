@@ -2,29 +2,46 @@ import SearchUserForm from './SearchUserForm';
 import { renderRouterControlledElement } from '../../setupTests';
 import { screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
-import { searchUser } from '../../data/github-api';
+import * as githubApi from '../../data/github-api';
 
-const mockSubmitAction = jest.fn();
+/**
+ * Render the search form wrapped in a memory router.
+ * Pass its default submit action (API calls are mocked).
+ * Can overide with different mock action via `action` argument.
+ */
+const renderSearchForm = () => {
+	renderRouterControlledElement(<SearchUserForm />, { action: githubApi.searchUser });
+};
 
+/**
+ * Get the search input.
+ */
 const getInput = () => {
 	return screen.getByLabelText(/Enter a GitHub username/i);
 };
 
+afterEach(() => {
+	jest.restoreAllMocks();
+});
+
+/**
+ * Actual tests
+ */
 describe('<SearchUserForm />', () => {
 	test('should render', () => {
-		renderRouterControlledElement(<SearchUserForm />);
+		renderSearchForm();
 		const input = getInput();
 		expect(input).toBeInTheDocument();
 	});
 
 	test('search input should have focus on mount', () => {
-		renderRouterControlledElement(<SearchUserForm />);
+		renderSearchForm();
 		const input = getInput();
 		expect(input).toHaveFocus();
 	});
 
 	test('input value should change when typing in it', async () => {
-		renderRouterControlledElement(<SearchUserForm />);
+		renderSearchForm();
 		const input = getInput();
 		const user = userEvent.setup();
 		await user.type(input, 'Hello world!');
@@ -32,64 +49,80 @@ describe('<SearchUserForm />', () => {
 	});
 
 	test('should call submit action when hitting enter', async () => {
-		renderRouterControlledElement(<SearchUserForm />, { action: mockSubmitAction });
+		jest.spyOn(githubApi, 'searchUser');
+		renderSearchForm();
 		const input = getInput();
 		const user = userEvent.setup();
 		await user.click(input);
 		await user.keyboard('{Enter}');
-		expect(mockSubmitAction).toHaveBeenCalled();
+		expect(githubApi.searchUser).toHaveBeenCalled();
 	});
 
 	test('should display "Searching..." while form is being processed', async () => {
-		mockSubmitAction.mockImplementationOnce(() => {
-			return new Promise(resolve => {
-				setTimeout(() => {
-					resolve(true);
-				}, 100);
-			});
-		});
-
-		renderRouterControlledElement(<SearchUserForm />, { action: mockSubmitAction });
+		renderSearchForm();
 
 		const input = getInput();
 		const user = userEvent.setup();
 
-		await act(async () => {
-			await user.click(input);
-			await user.keyboard('{Enter}');
-		});
+		await user.type(input, 'asdf');
+		await user.keyboard('{Enter}');
 
 		const searching = await screen.findByText(/Searching/i);
 		expect(searching).toBeInTheDocument();
 	});
 
-	test.only('should display error if error returned and input should regain focus', async () => {
-		mockSubmitAction.mockReturnValueOnce({ error: 'My test error' });
-
-		renderRouterControlledElement(<SearchUserForm />, { action: mockSubmitAction });
+	test('should display validation error if username is empty', async () => {
+		renderSearchForm();
 
 		const input = getInput();
 		const user = userEvent.setup();
 
-		await user.click(input);
+		await user.clear(input);
 		await user.keyboard('{Enter}');
 
-		const error = await screen.findByText('My test error');
+		const error = await screen.findByText(/Please enter a username/i);
 		expect(error).toBeInTheDocument();
 		expect(input).toHaveFocus();
 	});
 
-	test.only('should display validation error if username is empty', async () => {
-		// Testing with actual route action since it shouldn't hit the API in this case
-		renderRouterControlledElement(<SearchUserForm />, { action: searchUser });
+	test('should show "no gists" message if valid user, but has no gists', async () => {
+		renderSearchForm();
 
 		const input = getInput();
 		const user = userEvent.setup();
 
-		await user.click(input);
+		await user.type(input, 'no-gists');
 		await user.keyboard('{Enter}');
 
-		const error = await screen.findByText('Please enter a username.');
+		const error = await screen.findByText(/User exists but has no gists/i);
+		expect(error).toBeInTheDocument();
+		expect(input).toHaveFocus();
+	});
+
+	test('should show rate-limit error', async () => {
+		renderSearchForm();
+
+		const input = getInput();
+		const user = userEvent.setup();
+
+		await user.type(input, 'rate-limit');
+		await user.keyboard('{Enter}');
+
+		const error = await screen.findByText(/Rate limit reached/i);
+		expect(error).toBeInTheDocument();
+		expect(input).toHaveFocus();
+	});
+
+	test('should display user not found if 404 returned', async () => {
+		renderSearchForm();
+
+		const input = getInput();
+		const user = userEvent.setup();
+
+		await user.type(input, 'throw-error');
+		await user.keyboard('{Enter}');
+
+		const error = await screen.findByText(/User does not exist/i);
 		expect(error).toBeInTheDocument();
 		expect(input).toHaveFocus();
 	});

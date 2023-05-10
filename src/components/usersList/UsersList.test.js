@@ -1,48 +1,28 @@
-import { screen, waitFor, prettyDOM, render } from '@testing-library/react';
+import { screen } from '@testing-library/react';
 import { renderRouterControlledElement } from '../../setupTests';
 import UsersList from './UsersList';
-import { defer } from 'react-router-dom';
+import { getGists } from '../../data/github-api';
 
-const mockGists = {
-	data: [
-		{
-			owner: {
-				login: 'Darren',
-				avatar_url: 'https://avatars.githubusercontent.com/u/1315907?v=4',
-			},
-			public: true,
-		},
-	],
-};
-
-const mockGistsFetcher = new Promise(resolve => {
-	setTimeout(() => {
-		resolve(mockGists);
-	}, 100);
-});
-
-const mockLoader = () => {
-	return defer({
-		gists: mockGistsFetcher,
-	});
+const renderUsersList = () => {
+	renderRouterControlledElement(<UsersList />, { loader: getGists });
 };
 
 describe('<UsersList />', () => {
 	test('should display loading text as data is coming in', async () => {
-		renderRouterControlledElement(<UsersList />, { loader: mockLoader });
+		renderUsersList();
 
-		await waitFor(() => {
-			const loadingText = screen.getByText(/Loading users list/i);
-			expect(loadingText).toBeInTheDocument();
-		});
+		const loadingText = await screen.findByText(/Loading users list/i);
+		const listItems = screen.queryAllByRole('listitem');
+		expect(loadingText).toBeInTheDocument();
+		expect(listItems.length).toBe(0);
 	});
 
 	test('should display user(s) when data loaded', async () => {
-		renderRouterControlledElement(<UsersList />, { loader: mockLoader });
+		renderUsersList();
 
-		await waitFor(async () => {
-			const listItems = await screen.findAllByRole('listitem');
-			expect(listItems).toHaveLength(1);
-		});
+		const listItems = await screen.findAllByRole('listitem');
+		const loadingText = screen.queryByText(/Loading users list/i);
+		expect(listItems.length).toBeGreaterThan(0);
+		expect(loadingText).not.toBeInTheDocument();
 	});
 });
